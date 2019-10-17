@@ -6,6 +6,9 @@ if (Meteor.connection._mongo_livedata_collections || false) {
 
     window.Meteor.subscribe('podcast_list', function() {
         window.fetchedPodcasts = window.conn.Podcast.find().fetch()
+    })
+
+    window.Meteor.subscribe('tagsList', function() {
         window.fetchedTags = window.conn.Tags.find().fetch()
     })
 }

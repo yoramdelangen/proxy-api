@@ -9,11 +9,26 @@ class PodcastScraper
 {
     const TIMEOUT_TICK = 25;
 
+    public static $tags = [];
+    public static $podcasts = [];
+
     protected static $process = null;
 
-    public static function get()
+    public static function tags(): array
+    {
+        return static::$tags;
+    }
+
+    public static function get(bool $breakCache = false): array
     {
         $cache = new FilesystemAdapter();
+
+        // breakcache
+        if ($breakCache) {
+            if ($cache->hasItem('podcasts')) {
+                $cache->deleteItem('podcasts');
+            }
+        }
 
         return $cache->get('podcasts', function (ItemInterface $item) {
             $item->expiresAfter(3600 / 2);
@@ -49,28 +64,29 @@ class PodcastScraper
         $navigate = $page->navigate('https://www.superdatascience.com/podcast');
         $navigate->waitForNavigation();
 
-        $podcasts = static::waitingForResult($page, 'window.fetchedPodcasts');
-        $tags = static::waitingForResult($page, 'window.fetchedTags');
+        static::$podcasts = static::waitingForResult($page, 'window.fetchedPodcasts');
+        static::$tags = static::waitingForResult($page, 'window.fetchedTags');
 
         $browser->close();
         static::stopBackgroundProcess();
 
-        $tags = array_combine(
-            array_column($tags, '_id'),
-            array_column($tags, 'title'),
+        static::$tags = array_combine(
+            array_column(static::$tags, '_id'),
+            array_column(static::$tags, 'title')
         );
 
-        return array_map(function ($podcast) use ($tags) {
+        return array_map(function ($podcast) {
             // change tags[_id] into a proper name
-            $podcast['tags'] = array_map(function ($tag) use ($tags) {
-                return [
-                    'id' => $tag,
-                    'title' => $tags[$tag] ?? null,
-                ];
+            $podcast['tags'] = array_map(function ($tag) {
+                return static::$tags[$tag] ?? null;
+            // return [
+                //     'id' => $tag,
+                //     'title' => $tags[$tag] ?? null,
+                // ];
             }, $podcast['tags']);
 
             return $podcast;
-        }, $podcasts);
+        }, static::$podcasts);
     }
 
     protected static function waitingForResult($page, string $waitingScript)

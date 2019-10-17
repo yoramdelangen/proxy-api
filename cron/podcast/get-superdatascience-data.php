@@ -1,5 +1,7 @@
 <?php
 
+use Cocur\Slugify\Slugify;
+
 require_once __DIR__.'/../../vendor/autoload.php';
 
 // https://github.com/radekmie/MiniMongoExplorer/blob/master/extension/lib/inject.js
@@ -13,38 +15,73 @@ $gt = $db->table('guests');
 
 foreach ($podcasts as $podcast) {
 	// first lookup the guest if he exists
-	$guestHash = hash('sha256', $podcast['guest']['name']);
+	$guestHash = hash('sha256', trim($podcast['guest']['name']));
 	$guest = $gt->select()->where('hash_name', $guestHash)->one();
-	dump($guest);
+
 	if (!$guest) {
 		$gt->insert([
 			'hash_name' => $guestHash,
-			'name' => $podcast['guest']['name'],
+			'name' => trim($podcast['guest']['name']),
 			'image' => $podcast['guest']['image'],
 		])->execute();
 
 		$guest = $gt->select()->where('hash_name', $guestHash)->one();
 	}
 
-	dd($podcast, $guest);
-	$rec = $pt->select()->where('id', $podcast['_id'])->one();
+	// strip episode number from the title.
+	preg_match('/^SDS\s(\d{1,3}):\s(.*)/', $podcast['title'], $matches);
+
+	if ($matches) {
+		$podcast['episode'] = (int) $matches[1];
+		$podcast['title'] = end($matches);
+	} else {
+		$podcast['episode'] = null;
+	}
+
+	$rec = $pt->select()->where('original_id', $podcast['_id'])->one();
 
 	if ($rec) {
-		dd($rec);
+		unset($podcast['id']);
+		$pt->update([
+			'guest_id' => $guest['id'],
+			'type' => $podcast['type'],
+			'title' => $podcast['title'],
+			'episode' => $podcast['episode'],
+			'tags' => json_encode($podcast['tags']),
+			'slug' => $podcast['prettyLink'],
+			'image' => $podcast['image'],
+			'audio_length' => (int) $podcast['audio']['timeLength'],
+			'audio_source' => $podcast['audio']['url'],
+			'updated_at' => 'CURRENT_TIMESTAMP',
+		])
+			->where('id', $rec['id'])
+			->execute();
+		continue;
 	}
+
+	$pt->insert([
+		'original_id' => $podcast['_id'],
+		'guest_id' => $guest['id'],
+		'type' => $podcast['type'],
+		'title' => $podcast['title'],
+		'episode' => $podcast['episode'],
+		'tags' => json_encode($podcast['tags']),
+		'slug' => $podcast['prettyLink'],
+		'image' => $podcast['image'],
+		'audio_length' => (int) $podcast['audio']['timeLength'],
+		'audio_source' => $podcast['audio']['url'],
+	])->execute();
 }
 
-die;
-sleep(10);
+$tags = PodcastScraper::tags() ?: [];
 
-// [
-// 	"_id" => "wXQjYQATDqHrzhKmj"
-// 	"audio" => array:2 [ …2]
-// 	"creationDate" => []
-// 	"guest" => array:2 [ …2]
-// 	"image" => "https://sds-platform-private.s3-us-east-2.amazonaws.com/podcast-images/uvP4znMn2jYzQ4anS"
-// 	"prettyLink" => "sds-031-ab-testing-kissmetrics-and-ways-to-a-better-lifestyle-with-david-tanaskovic"
-// 	"tags" => array:2 [ …2]
-// 	"title" => "SDS 031: AB Testing, Kissmetrics and ways to a better lifestyle"
-// 	"type" => "guest"
-// ]
+$slugifier = new Slugify();
+
+$tt = $db->table('tags');
+foreach ($tags as $id => $tag) {
+	$tt->replace([
+		'original_id' => $id,
+		'title' => $tag,
+		'slug' => $slugifier->slugify($tag),
+	])->execute();
+}

@@ -4,7 +4,7 @@ use ClanCats\Hydrahon\Builder;
 
 // include this file before every application load.
 $dotenv = Dotenv\Dotenv::create(__DIR__);
-$dotenv->load();
+$dotenv->load(true);
 
 //
 // Helper functions
@@ -32,6 +32,8 @@ function connectDb(string $db, string $username, string $password, string $host 
             return $statement->fetchAll(\PDO::FETCH_ASSOC);
         }
 
-        dd(__METHOD__, $query, $queryString, $queryParameters);
+        if (filter_var(getenv('DEBUG', false), FILTER_VALIDATE_BOOLEAN)) {
+            dump($query, $queryString, $queryParameters);
+        }
     });
 }

@@ -6,7 +6,8 @@
         "cron/cron": "^1.4",
         "chrome-php/chrome": "^0.7.0",
         "clancats/hydrahon": "dev-master",
-        "vlucas/phpdotenv": "^3.6"
+        "vlucas/phpdotenv": "^3.6",
+        "cocur/slugify": "^3.2"
     },
     "autoload": {
         "psr-4": {
