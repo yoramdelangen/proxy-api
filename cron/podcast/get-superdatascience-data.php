@@ -1,72 +1,50 @@
 <?php
 
-use HeadlessChromium\BrowserFactory;
-use Symfony\Component\Process\Process;
-
 require_once __DIR__.'/../../vendor/autoload.php';
+
 // https://github.com/radekmie/MiniMongoExplorer/blob/master/extension/lib/inject.js
 
-$js = file_get_contents(storage_path('podcast/hack_meteor.js'));
+$podcasts = PodcastScraper::get();
 
-$driver = storage_path('podcast/bin/chromedriver-mac');
-$chromeProcess = new Process([$driver], null, ['DISPLAY' => ($_ENV['DISPLAY'] ?? ':0')]);
-$chromeProcess->start();
-// print('Binary: '. $driver ."\n\n");
-// dump($chromeProcess);
-// $chromeProcess->stop();
-// return;
+$db = connectDb(env('DB_PODCAST'), env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'));
 
-$driver = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-$browserFactory = new BrowserFactory($driver);
-// starts headless chrome
-$browser = $browserFactory->createBrowser([
-    // 'headless' => false, // disable headless mode
-    'connectionDelay' => 0.8, // add 0.8 second of delay between each instruction sent to chrome,
-    // 'debugLogger' => 'php://stdout', // will enable verbose mode
-    // 'windowSize' => [1920, 1000],
-    'enableImages' => false,
-    // 'noSandbox' => true,
-]);
+$pt = $db->table('podcasts');
+$gt = $db->table('guests');
 
-// creates a new page and navigate to an url
-$page = $browser->createPage();
+foreach ($podcasts as $podcast) {
+	// first lookup the guest if he exists
+	$guestHash = hash('sha256', $podcast['guest']['name']);
+	$guest = $gt->select()->where('hash_name', $guestHash)->one();
+	dump($guest);
+	if (!$guest) {
+		$gt->insert([
+			'hash_name' => $guestHash,
+			'name' => $podcast['guest']['name'],
+			'image' => $podcast['guest']['image'],
+		])->execute();
 
-$page->addPreScript($js, ['onLoad' => true]);
-
-$navigate = $page->navigate('https://www.superdatascience.com/podcast');
-$navigate->waitForNavigation();
-
-function waitingForResult($page, string $waitingScript)
-{
-	$payload = null;
-	$foundPayload = false;
-	// wait
-	while($foundPayload === false) {
-		print('waiting for "'.$waitingScript.'"...'."\n");
-		\sleep(1);
-
-		// evaluate script in the browser
-		$payload = $page->evaluate($waitingScript)->getReturnValue();
-
-		var_dump($payload);
-
-		if ($payload) {
-			$foundPayload = true;
-			print('Found it!!'."\n");
-		}
+		$guest = $gt->select()->where('hash_name', $guestHash)->one();
 	}
 
-	return $payload;
+	dd($podcast, $guest);
+	$rec = $pt->select()->where('id', $podcast['_id'])->one();
+
+	if ($rec) {
+		dd($rec);
+	}
 }
-
-$podcasts = waitingForResult($page, 'window.fetchedPodcasts');
-$tags = waitingForResult($page, 'window.fetchedTags');
-
-$browser->close();
-$chromeProcess->stop();
-
-var_dump(count($podcasts), $tags);
 
 die;
 sleep(10);
 
+// [
+// 	"_id" => "wXQjYQATDqHrzhKmj"
+// 	"audio" => array:2 [ …2]
+// 	"creationDate" => []
+// 	"guest" => array:2 [ …2]
+// 	"image" => "https://sds-platform-private.s3-us-east-2.amazonaws.com/podcast-images/uvP4znMn2jYzQ4anS"
+// 	"prettyLink" => "sds-031-ab-testing-kissmetrics-and-ways-to-a-better-lifestyle-with-david-tanaskovic"
+// 	"tags" => array:2 [ …2]
+// 	"title" => "SDS 031: AB Testing, Kissmetrics and ways to a better lifestyle"
+// 	"type" => "guest"
+// ]
