@@ -9,6 +9,7 @@ $router = new RouteCollector();
 $router->get('/', function () {
 	return ['msg' => 'There is nothing here for you to find.'];
 });
+$router->get('get-new-token', [App\GetNewToken::class, 'handle']);
 $router->group(['prefix' => 'podcast'], function (RouteCollector $router) {
     $router->get('/', [App\Podcast\Podcast::class, 'handle']);
 });
