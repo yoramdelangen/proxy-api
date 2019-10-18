@@ -50,7 +50,7 @@ class PodcastScraper
         $browser = $browserFactory->createBrowser([
             // 'headless' => false, // disable headless mode
             'connectionDelay' => 0.8, // add 0.8 second of delay between each instruction sent to chrome,
-            // 'debugLogger' => 'php://stdout', // will enable verbose mode
+            'debugLogger' => filter_var(getenv('DEBUG', false), FILTER_VALIDATE_BOOLEAN) ? 'php://stdout' : null, // will enable verbose mode
             // 'windowSize' => [1920, 1000],
             'enableImages' => false,
             // 'noSandbox' => true,
