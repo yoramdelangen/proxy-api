@@ -43,7 +43,12 @@ class PodcastScraper
 
         static::initProcess();
 
-        $driver = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+        if (getenv('APP_ENV') === 'local') {
+            $driver = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+        } else {
+            $driver = 'chromium-browser';
+        }
+
         $browserFactory = new BrowserFactory($driver);
 
         // starts headless chrome
