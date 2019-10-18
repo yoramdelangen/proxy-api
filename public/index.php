@@ -6,6 +6,9 @@ use Phroute\Phroute\Dispatcher;
 use Phroute\Phroute\RouteCollector;
 
 $router = new RouteCollector();
+$router->get('/', function () {
+	return ['msg' => 'There is nothing here for you to find.'];
+});
 $router->group(['prefix' => 'podcast'], function (RouteCollector $router) {
     $router->get('/', [App\Podcast\Podcast::class, 'handle']);
 });
