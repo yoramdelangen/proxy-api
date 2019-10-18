@@ -4,7 +4,8 @@ use Cocur\Slugify\Slugify;
 
 require_once __DIR__.'/../../vendor/autoload.php';
 
-// https://github.com/radekmie/MiniMongoExplorer/blob/master/extension/lib/inject.js
+// Meteor - MiniMongo - https://github.com/radekmie/MiniMongoExplorer/blob/master/extension/lib/inject.js
+// Headless chrome @ ubuntu - https://gist.github.com/ipepe/94389528e2263486e53645fa0e65578b
 
 $podcasts = PodcastScraper::get();
 
