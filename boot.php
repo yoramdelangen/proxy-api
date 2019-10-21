@@ -20,9 +20,9 @@ function storage_path(string $path)
     return realpath(realpath(__DIR__.'/./storage/').'/'.$path);
 }
 
-function connectDb(string $db, string $username, string $password, string $host = 'localhost'): Builder
+function connectDb(string $username, string $password, string $db = null, string $host = 'localhost'): Builder
 {
-    $connection = new PDO('mysql:'.$host.'=localhost;dbname='.$db, $username, $password);
+    $connection = new PDO('mysql:host='.$host .($db ? ';dbname='.$db : null), $username, $password);
 
     return new Builder('mysql', function ($query, $queryString, $queryParameters) use ($connection) {
         $statement = $connection->prepare($queryString);

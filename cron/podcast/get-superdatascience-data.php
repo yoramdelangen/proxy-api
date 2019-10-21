@@ -9,7 +9,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 $podcasts = PodcastScraper::get();
 
-$db = connectDb(env('DB_PODCAST'), env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'));
+$db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
 
 $pt = $db->table('podcasts');
 $gt = $db->table('guests');

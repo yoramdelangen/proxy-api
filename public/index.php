@@ -6,9 +6,8 @@ use Phroute\Phroute\Dispatcher;
 use Phroute\Phroute\RouteCollector;
 
 $router = new RouteCollector();
-$router->group(['prefix' => 'podcast'], function (RouteCollector $router) {
-    $router->get('/', [App\Podcast\Podcast::class, 'handle']);
-});
+$router->get('/podcast', [App\Podcast\Podcast::class, 'handle']);
+$router->get('dbmanager/schema', [App\DBManager\Schema::class, 'handle']);
 
 // create dispatcher of the router
 $dispatcher = new Dispatcher($router->getData());

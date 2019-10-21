@@ -6,7 +6,7 @@ class Podcast
 {
     public function handle()
     {
-        $db = connectDb(env('DB_PODCAST'), env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'));
+        $db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
 
         $podcasts = $db->table('podcasts')
             ->select(['podcasts.*', 'g.name as guest_name', 'g.image as guest_image'])
