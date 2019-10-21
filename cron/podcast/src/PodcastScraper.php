@@ -43,14 +43,19 @@ class PodcastScraper
 
         static::initProcess();
 
-        $driver = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+        if (getenv('APP_ENV') === 'local') {
+            $driver = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+        } else {
+            $driver = 'chromium-browser';
+        }
+
         $browserFactory = new BrowserFactory($driver);
 
         // starts headless chrome
         $browser = $browserFactory->createBrowser([
             // 'headless' => false, // disable headless mode
             'connectionDelay' => 0.8, // add 0.8 second of delay between each instruction sent to chrome,
-            // 'debugLogger' => 'php://stdout', // will enable verbose mode
+            'debugLogger' => filter_var(getenv('DEBUG', false), FILTER_VALIDATE_BOOLEAN) ? 'php://stdout' : null, // will enable verbose mode
             // 'windowSize' => [1920, 1000],
             'enableImages' => false,
             // 'noSandbox' => true,

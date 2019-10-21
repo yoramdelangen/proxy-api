@@ -4,12 +4,15 @@ namespace App\Podcast;
 
 class Podcast
 {
+    const ACCESS_TOKEN = [
+        'E#hpFez#FVyTEa8sw#pmpUb@2n*zMea5$w$*TY?wg@8AvaV7tT5y@*b2CR47Pre5',
+    ];
+
     public function handle()
     {
         $db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
 
-        $podcasts = $db->table('podcasts')
-            ->select(['podcasts.*', 'g.name as guest_name', 'g.image as guest_image'])
+        $podcasts = $db->select('podcasts', [raw('podcasts.*'), 'g.name as guest_name', 'g.image as guest_image'])
             ->join('guests as g', 'g.id', '=', 'podcasts.guest_id')
             ->get();
 

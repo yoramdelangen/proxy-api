@@ -1,6 +1,11 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 use ClanCats\Hydrahon\Builder;
+use ClanCats\Hydrahon\Query\Expression;
 
 // include this file before every application load.
 $dotenv = Dotenv\Dotenv::create(__DIR__);
@@ -12,12 +17,17 @@ $dotenv->load(true);
 
 function env(string $env)
 {
-	return getenv($env);
+    return getenv($env);
 }
 
 function storage_path(string $path)
 {
     return realpath(realpath(__DIR__.'/./storage/').'/'.$path);
+}
+
+function raw(string $arg): Expression
+{
+    return new Expression($arg);
 }
 
 function connectDb(string $username, string $password, string $db = null, string $host = 'localhost'): Builder
@@ -28,12 +38,12 @@ function connectDb(string $username, string $password, string $db = null, string
         $statement = $connection->prepare($queryString);
         $statement->execute($queryParameters);
 
-        if ($query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface) {
-            return $statement->fetchAll(\PDO::FETCH_ASSOC);
-        }
-
         if (filter_var(getenv('DEBUG', false), FILTER_VALIDATE_BOOLEAN)) {
             dump($query, $queryString, $queryParameters);
+        }
+
+        if ($query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface) {
+            return $statement->fetchAll(\PDO::FETCH_ASSOC);
         }
     });
 }

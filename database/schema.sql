@@ -29,5 +29,6 @@ CREATE TABLE tags (
   id tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   original_id varchar(255) NOT NULL DEFAULT '',
   title varchar(255) NOT NULL DEFAULT '',
+  slug varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;

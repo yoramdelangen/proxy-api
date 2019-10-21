@@ -10,6 +10,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 $podcasts = PodcastScraper::get();
 
 $db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
+print('Found '. count($podcasts) .' podcasts to sync.'."\n");
 
 $pt = $db->table('podcasts');
 $gt = $db->table('guests');
@@ -75,6 +76,8 @@ foreach ($podcasts as $podcast) {
 }
 
 $tags = PodcastScraper::tags() ?: [];
+
+print('Ready to sync '. count($tags) .' tags.'."\n");
 
 $slugifier = new Slugify();
 

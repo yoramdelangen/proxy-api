@@ -6,6 +6,10 @@ use Phroute\Phroute\Dispatcher;
 use Phroute\Phroute\RouteCollector;
 
 $router = new RouteCollector();
+$router->get('/', function () {
+	return ['msg' => 'There is nothing here for you to find.'];
+});
+$router->get('get-new-token', [App\GetNewToken::class, 'handle']);
 $router->get('/podcast', [App\Podcast\Podcast::class, 'handle']);
 $router->get('dbmanager/schema', [App\DBManager\Schema::class, 'handle']);
 
