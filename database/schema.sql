@@ -3,7 +3,7 @@ CREATE TABLE podcasts (
   original_id varchar(255) NOT NULL DEFAULT '',
   guest_id smallint(5) unsigned DEFAULT NULL,
   type varchar(255) DEFAULT 'guest',
-  episode tinyint(3) unsigned NULL DEFAULT NULL,
+  episode smallint(5) unsigned DEFAULT NULL,
   title varchar(255) NOT NULL DEFAULT '',
   tags json DEFAULT NULL,
   slug varchar(255) NOT NULL DEFAULT '',
@@ -13,7 +13,7 @@ CREATE TABLE podcasts (
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=latin1;
 
 CREATE TABLE guests (
   id smallint(8) unsigned NOT NULL AUTO_INCREMENT,

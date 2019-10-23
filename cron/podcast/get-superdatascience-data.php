@@ -15,7 +15,7 @@ print('Found '. count($podcasts) .' podcasts to sync.'."\n");
 $pt = $db->table('podcasts');
 $gt = $db->table('guests');
 
-foreach ($podcasts as $podcast) {
+foreach ($podcasts as $i => $podcast) {
 	// first lookup the guest if he exists
 	$guestHash = hash('sha256', trim($podcast['guest']['name']));
 	$guest = $gt->select()->where('hash_name', $guestHash)->one();

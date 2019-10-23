@@ -33,13 +33,14 @@ function raw(string $arg): Expression
 function connectDb(string $username, string $password, string $db = null, string $host = 'localhost'): Builder
 {
     $connection = new PDO('mysql:host='.$host .($db ? ';dbname='.$db : null), $username, $password);
+    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     return new Builder('mysql', function ($query, $queryString, $queryParameters) use ($connection) {
         $statement = $connection->prepare($queryString);
-        $statement->execute($queryParameters);
+        $out = $statement->execute($queryParameters);
 
         if (filter_var(getenv('DEBUG', false), FILTER_VALIDATE_BOOLEAN)) {
-            dump($query, $queryString, $queryParameters);
+            dump($query, $queryString, $queryParameters, $out, $connection->errorInfo());
         }
 
         if ($query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface) {
