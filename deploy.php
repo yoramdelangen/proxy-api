@@ -17,7 +17,7 @@ add('shared_files', ['.env']);
 // Writable dirs by web server
 // add('writable_dirs', ['storage', 'public']);
 // Hosts
-host('136.243.214.244')
+host('ssh.sydl.nl')
     ->stage('production')
     ->user('yoram')
     ->set('deploy_path', '/var/www/apps/proxy-api')
