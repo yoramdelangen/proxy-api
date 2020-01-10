@@ -9,9 +9,10 @@ $router = new RouteCollector();
 $router->get('/', function () {
 	return ['msg' => 'There is nothing here for you to find.'];
 });
-$router->get('get-new-token', [App\GetNewToken::class, 'handle']);
+$router->get('/get-new-token', [App\GetNewToken::class, 'handle']);
 $router->get('/podcast', [App\Podcast\Podcast::class, 'handle']);
-$router->get('dbmanager/schema', [App\DBManager\Schema::class, 'handle']);
+$router->get('/dbmanager/schema', [App\DBManager\Schema::class, 'handle']);
+$router->get('/scrape', [App\Scraper::class, 'handle']);
 
 // create dispatcher of the router
 $dispatcher = new Dispatcher($router->getData());
