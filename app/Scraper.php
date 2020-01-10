@@ -27,7 +27,7 @@ class Scraper
 		try {
 			$rsp = $client->get($_GET['url']);
 		} catch (Exception $e) {
-			return ['err' => $e->getMessge()];
+			return ['err' => $e->getMessage()];
 		}
 
 		// when having a query and attr query_string set.
