@@ -48,3 +48,10 @@ function connectDb(string $username, string $password, string $db = null, string
         }
     });
 }
+
+function throwResponseHeader(int $code)
+{
+    if (in_array($code, [400, 401, 405, 406, 500, 501, 502, 503, 504, 404, 403], true)) {
+        http_response_code($code);
+    }
+}
