@@ -14,6 +14,7 @@ $router->get('/get-new-token', [App\GetNewToken::class, 'handle']);
 $router->get('/podcast', [App\Podcast\Podcast::class, 'handle']);
 $router->get('/dbmanager/schema', [App\DBManager\Schema::class, 'handle']);
 $router->get('/scrape', [App\Scraper::class, 'handle']);
+$router->get('/oauth/callback', [App\OAuthCallback::class, 'handle']);
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: X-TOKEN');
