@@ -123,6 +123,11 @@ class Scraper
     {
         $domain = parse_url($url);
 
+        // check if is current relative path
+        if (mb_substr($path, 0, 2) === './') {
+            $path = str_replace('./', $domain['path'], $path);
+        }
+
         return 'https://'.str_replace('//', '/', $domain['host'].'/'.$path);
     }
 }
