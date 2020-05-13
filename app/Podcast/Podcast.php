@@ -10,7 +10,7 @@ class Podcast
 
     public function handle()
     {
-        $db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
+        $db = connectMySQL(getenv('DB_PODCAST_USER'), getenv('DB_PODCAST_PASSWORD'), getenv('DB_PODCAST'));
 
         $podcasts = $db->select('podcasts', [raw('podcasts.*'), 'g.name as guest_name', 'g.image as guest_image'])
             ->join('guests as g', 'g.id', '=', 'podcasts.guest_id')

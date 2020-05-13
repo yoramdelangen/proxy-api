@@ -29,7 +29,7 @@ class ResolveHanlder implements HandlerResolverInterface
             if ($tokens) {
             	$valid = $this->checkHeader($handler[0], $tokens);
 
-            	if (!$valid) {
+            	if (!$valid && getenv('APP_ENV') !== 'local') {
             		// 403 header was already sent.
             		return function () {
             			return ['err' => 'noop access'];

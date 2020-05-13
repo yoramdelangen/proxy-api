@@ -6,10 +6,14 @@ use PDO;
 
 class Schema
 {
+    const ACCESS_TOKEN = [
+        'E#hpFez#FVyTEa8sw#pmpUb@2n*zMea5$w$*TY?wg@8AvaV7tT5y@*b2CR47Pre5',
+    ];
+
 	public function handle()
 	{
 		$host = 'localhost';
-		$connection = new PDO('mysql:host='.$host, env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'));
+		$connection = new PDO('mysql:host='.$host, getenv('DB_PODCAST_USER'), getenv('DB_PODCAST_PASSWORD'));
 
 		//debug connection
 		// $connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);

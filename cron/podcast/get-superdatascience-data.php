@@ -9,7 +9,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 $podcasts = PodcastScraper::get();
 
-$db = connectDb(env('DB_PODCAST_USER'), env('DB_PODCAST_PASSWORD'), env('DB_PODCAST'));
+$db = connectMySQL(getenv('DB_PODCAST_USER'), getenv('DB_PODCAST_PASSWORD'), getenv('DB_PODCAST'));
 print('Found '. count($podcasts) .' podcasts to sync.'."\n");
 
 $pt = $db->table('podcasts');

@@ -6,7 +6,7 @@ class GetNewToken
 {
 	public function handle()
 	{
-		$limit = $_GET['length'] ?? 64;
+		$limit = (int) ($_GET['length'] ?? 64);
 
 		return ['new' => $this->generateStrongPassword($limit)];
 	}
@@ -21,7 +21,7 @@ class GetNewToken
 	//
 	// Note: the $add_dashes option will increase the length of the password by
 	// floor(sqrt(N)) characters.
-	public function generateStrongPassword($length = 9, $add_dashes = false, $available_sets = 'luds')
+	public function generateStrongPassword(int $length = 9, bool $add_dashes = false, $available_sets = 'luds')
 	{
 		$sets = array();
 		if(strpos($available_sets, 'l') !== false)
