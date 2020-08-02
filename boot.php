@@ -88,3 +88,7 @@ function throwResponseHeader(int $code)
         http_response_code($code);
     }
 }
+
+function responseHeader(int $code) {
+    http_response_code($code);
+}
