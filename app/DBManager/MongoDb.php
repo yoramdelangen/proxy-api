@@ -46,6 +46,8 @@ class MongoDb
 
         $db = $client->selectCollection($database, $collection);
         if (!$id) {
+            $search = json_decode(urldecode($_GET['search']), true) ?: [];
+
             return [
                 'db' => $database,
                 'type' => 'records',
@@ -54,7 +56,7 @@ class MongoDb
                     $data = $record->getArrayCopy();
                     unset($data['_id']);
                     return $data;
-                }, iterator_to_array($db->find()))
+                }, iterator_to_array($db->find($search)))
             ];
         }
 
@@ -85,24 +87,60 @@ class MongoDb
         $request = Request::createFromGlobals();
         $data = json_decode($request->getContent(), true);
 
-        $id = $id ?: ($data['id'] ?? null);
+        $formData = $data['form'] ?? [];
 
-        if ($id && $db->findOne(['id' => $id])) {
-            $db->updateOne(['id' => $id], ['$set' => $data]);
-        } else {
-            if ($id) {
-                $data['id'] = $id ?: $data['id'];
-            } else if (($data['id'] ?? false) === false) {
-                $id = $data['id'] = Str::uuid();
+        if ($data['multiple'] ?? false) {
+            $existing = iterator_to_array($db->find());
+            $ids = array_map(function ($record) { return $record['id']; }, $existing);
+
+            $updates = [];
+            $inserts = [];
+            foreach($formData as $payload) {
+                if (($payload['id'] ?? false) && in_array($payload['id'], $ids, true)) {
+                    $updates[] = $payload;
+                    continue;
+                }
+                $inserts[] = $payload;
             }
 
-            $db->insertOne($data);
+            // handle multiple updates
+            if ($updates) {
+                foreach($updates as $update) {
+                    $db->updateOne(['id' => $update['id']], ['$set' => $update]);
+                }
+            }
+
+            // handle all inserts
+            if ($inserts) {
+                $db->insertMany($inserts);
+            }
+
+            return [
+                'affected' => count($updates) + count($inserts),
+                'inserted' => count($inserts),
+                'updated' => count($updates),
+            ];
+        }
+
+        $id = $id ?: ($formData['id'] ?? null);
+
+        if ($id && $db->findOne(['id' => $id])) {
+            $db->updateOne(['id' => $id], ['$set' => $formData]);
+        } else {
+            if ($id) {
+                $formData['id'] = $id ?: $formData['id'];
+            } else if (($formData['id'] ?? false) === false) {
+                $id = $formData['id'] = Str::uuid();
+            }
+
+            $db->insertOne($formData);
         }
 
         $record = $db->findOne(['id' => $id]);
         unset($record['_id']);
 
         return [
+            'affected' => 1,
             'data' => $record,
         ];
     }
