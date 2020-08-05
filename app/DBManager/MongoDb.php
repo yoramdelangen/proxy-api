@@ -46,7 +46,7 @@ class MongoDb
 
         $db = $client->selectCollection($database, $collection);
         if (!$id) {
-            $search = json_decode(urldecode($_GET['search']), true) ?: [];
+            $search = json_decode(urldecode($_GET['search'] ?? '[]'), true) ?: [];
 
             return [
                 'db' => $database,
