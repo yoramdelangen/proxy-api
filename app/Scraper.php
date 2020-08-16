@@ -44,6 +44,11 @@ class Scraper
             return $this->scrapeDOM($query, $attr, (string) $rsp->getBody());
         }
 
+        $contentType = $rsp->getHeader('content-type')[0];
+        if (!in_array(strtolower($contentType), ['text/html', 'text/html; charset=utf-8'], true)) {
+            header('Content-Type: '. $contentType);
+        }
+
         return $content;
     }
 

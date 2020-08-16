@@ -24,7 +24,7 @@ $router->get('/scrape', [App\Scraper::class, 'handle']);
 $router->get('/oauth/callback', [App\OAuthCallback::class, 'handle']);
 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: X-TOKEN');
+header('Access-Control-Allow-Headers: X-TOKEN, Content-Type');
 
 // create dispatcher of the router
 $dispatcher = new Dispatcher($router->getData(), new Utils\ResolveHanlder($router));
