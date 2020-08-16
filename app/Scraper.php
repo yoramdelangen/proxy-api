@@ -16,6 +16,7 @@ class Scraper
     public function handle()
     {
         $url = $_GET['url'] ?? null;
+        $url = str_replace(' ', '+', $url);
 
         if (! $url) {
             return ['err' => 'NO_URL'];
