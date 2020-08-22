@@ -24,9 +24,11 @@ class Scraper
             return ['err' => 'INVALID_NO_URL'];
         }
 
-        $client = new \GuzzleHttp\Client(['verify' => false, 'defaults' => [
-		    'verify' => false,
-		]]);
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+            'curl' => [CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false]
+        ]);
+
         try {
             $rsp = $client->get($_GET['url']);
         } catch (Exception $e) {
