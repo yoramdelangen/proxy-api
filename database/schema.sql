@@ -1,3 +1,4 @@
+/* podcast_db */
 CREATE TABLE podcasts (
   id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   original_id varchar(255) NOT NULL DEFAULT '',
@@ -32,3 +33,15 @@ CREATE TABLE tags (
   slug varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
+
+/* webdav_db */
+CREATE TABLE users (
+    id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    username VARBINARY(50),
+    digesta1 VARBINARY(32),
+    UNIQUE(username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* digest = md5(username:realm:password) */
+INSERT INTO users (username, digesta1) VALUES
+('admin',  md5('admin:D$FfTFsh23*H4c#PPK?*%mX$FaVRF7$&mA9z$bajfDBpgW8JfPezVcad3&XhzTAh:@iZ3p2ikeag3UTeRZ9LwFwG6YMJt7Y4kN_PARhoWaaNc3Wg3VaHdg98p2zP*H8sg'));
