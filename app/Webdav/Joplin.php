@@ -7,6 +7,7 @@ use Utils\DB;
 use function extension_loaded;
 use Sabre\DAV\Server as DAVServer;
 use Sabre\DAV\Auth\Plugin as AuthPlugin;
+use Sabre\DAV\Sync\Plugin as SyncPlugin;
 use Sabre\DAV\Locks\Plugin as LocksPlugin;
 use Sabre\DAV\FS\Directory as DAVDirectory;
 use Sabre\DAV\Browser\Plugin as BrowserPlugin;
@@ -33,6 +34,7 @@ class Joplin
         // This ensures that we get a pretty index in the browser, but it is
         // optional.
         $server->addPlugin(new BrowserPlugin());
+        $server->addPlugin(new SyncPlugin());
 
         // All we need to do now, is to fire up the server
         return $server->exec();
