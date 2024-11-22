@@ -1,7 +1,9 @@
 # Proxy API
 
 A little webserver to reverse proxy traffic. Mainly usefull for development
-purposes. Previous version was created with PHP, now using GO.
+purposes and workaround the CORS problems.. 
+
+Previous version was created with PHP, now using GO. 
 
 ## Requests
 
