@@ -29,6 +29,23 @@ func RouteCdnUpload() func(*fiber.Ctx) error {
 	var accessKeySecret = os.Getenv("CF_ACCESS_SECRET")
 
 	return func(c *fiber.Ctx) error {
+		token := c.GetReqHeaders()["X-Some-Token"]
+		if len(token) == 0 || token[0] != os.Getenv("APP_TOKEN") {
+			c.JSON(fiber.Map{
+				"status": false,
+				"error":  "Forbidden",
+			})
+			return nil
+		}
+
+		if len(accessKeyId) == 0 || len(accessKeySecret) == 0 {
+			c.JSON(fiber.Map{
+				"status": false,
+				"error":  "missing",
+			})
+			return nil
+		}
+
 		image, err := c.FormFile("image")
 		filename := c.FormValue("filename")
 		if err != nil {
